@@ -1,8 +1,9 @@
-from flask import Blueprint, jsonify, render_template, request
-# from webapp.models import *
+from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
 # from webapp.queries import *
+from webapp.config import BACKEND_PORT
 from webapp.forms import RegisterForm
 import bcrypt
+import requests
 
 blueprint = Blueprint('user', __name__, url_prefix='/users')
 
@@ -14,17 +15,29 @@ expiration_time = 20000
 def to_sign_up():
     form = RegisterForm()
     if request.method == 'POST' and form.validate():
-
-
+        url_parts = request.url.partition(f":5001")
+        resp = requests.post(f'{url_parts[0]}:{BACKEND_PORT}/{url_parts[2]}',
+                             json={'name': form.name.data,
+                                   'email': form.email.data,
+                                   'password': form.password.data,
+                                   'valid_password': form.valid_password.data,
+                                   })
+        if resp.status_code > 202:
+            flash(f"{resp.json()['msg']}")
+            return render_template('register.html', form=form)
+        flash(f"{resp.json()['msg']}")
+        return redirect(url_for('user.to_sign_in'))
 
     if request.method == 'GET':
+        url_parts = request.url.partition(f":5001")
+        print(url_parts)
         return render_template('registration.html', form=form)
 
     if request.method == 'OPTIONS':
         return jsonify({'msg': 'Allow GET, POST methods'}), 200
 
     else:
-        return jsonify({"method not allowed"}), 405
+        return jsonify({'msg':"method not allowed"}), 405
 
 
 @blueprint.route('/log', methods=['GET', 'POST'])

@@ -31,7 +31,7 @@ def create_app():
     # app.register_blueprint(stat_blueprint)
     jwt = JWTManager(app)
 
-    backend_port = 5000
+
 
     cookies = {'access_token_cookie': ""}
     
