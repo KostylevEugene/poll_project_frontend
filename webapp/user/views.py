@@ -29,8 +29,6 @@ def to_sign_up():
         return redirect(url_for('user.to_sign_in'))
 
     if request.method == 'GET':
-        url_parts = request.url.partition(f":5001")
-        print(url_parts)
         return render_template('registration.html', form=form)
 
     if request.method == 'OPTIONS':
