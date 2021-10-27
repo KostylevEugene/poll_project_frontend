@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, session
 from flask_jwt_extended import create_access_token, verify_jwt_in_request, \
     set_access_cookies, get_jwt_identity, create_refresh_token
 from flask_jwt_extended.exceptions import NoAuthorizationError
-from webapp.queries import *
+# from webapp.queries import *
 
 blueprint = Blueprint('admin', __name__, url_prefix='/adminpage')
 

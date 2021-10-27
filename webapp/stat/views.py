@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request, session
 from flask_jwt_extended import verify_jwt_in_request
 from flask_jwt_extended.exceptions import NoAuthorizationError
-from webapp.queries import *
+# from webapp.queries import *
 
 import json
 

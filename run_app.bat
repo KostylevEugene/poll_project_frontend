@@ -1,1 +1,1 @@
- set FLASK_APP=webapp && set FLASK_ENV=development && set FLASK_DEBUG=1 && flask run
+ set FLASK_APP=webapp && set FLASK_ENV=development && set FLASK_DEBUG=1 && set FLASK_RUN_PORT=5001 && flask run

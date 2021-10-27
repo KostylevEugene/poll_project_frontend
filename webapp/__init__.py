@@ -3,10 +3,9 @@ from flask_jwt_extended import JWTManager, create_access_token, verify_jwt_in_re
     set_access_cookies, get_jwt_identity, create_refresh_token
 from flask_jwt_extended.exceptions import NoAuthorizationError
 from webapp.config import *
-from webapp.db import db_session
-from webapp.forms import RegisterForm
-from webapp.models import *
-from webapp.queries import *
+# from webapp.forms import RegisterForm
+# from webapp.models import *
+# from webapp.queries import *
 from webapp.user.views import blueprint as user_blueprint
 from webapp.poll.views import blueprint as poll_blueprint
 from webapp.admin.views import blueprint as admin_blueprint
@@ -27,16 +26,16 @@ def create_app():
     app.config["JWT_COOKIE_CSRF_PROTECT"] = JWT_COOKIE_CSRF_PROTECT
 
     app.register_blueprint(user_blueprint)
-    app.register_blueprint(poll_blueprint)
-    app.register_blueprint(admin_blueprint)
-    app.register_blueprint(stat_blueprint)
+    # app.register_blueprint(poll_blueprint)
+    # app.register_blueprint(admin_blueprint)
+    # app.register_blueprint(stat_blueprint)
     jwt = JWTManager(app)
 
     backend_port = 5000
 
     cookies = {'access_token_cookie': ""}
     
-    user_schema = UserSchema()
+    # user_schema = UserSchema()
 
     #TODO: Расставь коды
 
