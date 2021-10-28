@@ -1,7 +1,7 @@
-from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
-# from webapp.queries import *
+from flask import Blueprint, flash, jsonify, make_response, redirect, render_template, request, session, url_for
+from flask_jwt_extended import set_access_cookies
 from webapp.config import BACKEND_PORT
-from webapp.forms import RegisterForm
+from webapp.forms import RegisterForm, SigningInForm
 import bcrypt
 import requests
 
@@ -10,10 +10,14 @@ blueprint = Blueprint('user', __name__, url_prefix='/users')
 salt = bcrypt.gensalt()
 expiration_time = 20000
 
+cookies = {'access_token_cookie': ""}
+
 
 @blueprint.route('/registration', methods=['GET', 'POST'])
 def to_sign_up():
+
     form = RegisterForm()
+
     if request.method == 'POST' and form.validate():
         url_parts = request.url.partition(f":5001")
         resp = requests.post(f'{url_parts[0]}:{BACKEND_PORT}/{url_parts[2]}',
@@ -25,6 +29,7 @@ def to_sign_up():
         if resp.status_code > 202:
             flash(f"{resp.json()['msg']}")
             return render_template('register.html', form=form)
+
         flash(f"{resp.json()['msg']}")
         return redirect(url_for('user.to_sign_in'))
 
@@ -35,39 +40,40 @@ def to_sign_up():
         return jsonify({'msg': 'Allow GET, POST methods'}), 200
 
     else:
-        return jsonify({'msg':"method not allowed"}), 405
+        return jsonify({'msg': "method not allowed"}), 405
 
 
 @blueprint.route('/log', methods=['GET', 'POST'])
 def to_sign_in():
-    # session['username'] = 'guest'
-    #
-    # if request.method == 'POST':
-    #     email = request.json['email']
-    #     password = request.json['password']
-    #
-    #     old_user = signed_in_user(email)
-    #
-    #     if old_user != email:
-    #         return jsonify({'msg': 'There is no such email'}), 201
-    #
-    #     else:
-    #         existed_password = get_password_by_email(email)
-    #         if bcrypt.checkpw(password.encode('utf8'), existed_password.encode('utf8')):
-    #             session['username'] = email
-    #             refresh_token = create_refresh_token(identity=email,
-    #                                                  expires_delta=datetime.timedelta(seconds=expiration_time))
-    #             access_token = create_access_token(identity=email,
-    #                                                expires_delta=datetime.timedelta(seconds=expiration_time))
-    #             response = jsonify({'login': True, 'JWT': access_token, 'refresh_token': refresh_token})
-    #             # app.config['JWT_COOKIE_CSRF_PROTECT'] = False
-    #             response.status_code = 200
-    #             return response
-    #         else:
-    #             jsonify({'msg': 'Wrong password'}), 407
+
+    form = SigningInForm()
+
+    session['username'] = "guest"
+
+    global cookies
+
+    if request.method == 'POST' and form.validate():
+        url_parts = request.url.partition(f":5001")
+        resp = requests.post(f'{url_parts[0]}:{BACKEND_PORT}/{url_parts[2]}',
+                             json={'email': form.email.data,
+                                   'password': form.password.data,
+                                   })
+        if resp.status_code > 202:
+            flash(f"{resp.json()['msg']}")
+            return render_template('signing_in.html', form=form)
+
+        session['username'] = form.email.data
+
+        respon = make_response(redirect(url_for('poll.get_mypolls')))
+
+        cookies = {'access_token_cookie': request.cookies.get('access_token')}
+
+        set_access_cookies(respon, resp.json()['JWT'])
+        respon.set_cookie('access_token', resp.json()['JWT'])
+        return respon
 
     if request.method == 'GET':
-        return jsonify({'msg': 'Login page'}), 200
+        return render_template('signing_in.html', form=form)
 
     if request.method == 'OPTIONS':
         return jsonify({'msg': 'Allow GET, POST methods'}), 200

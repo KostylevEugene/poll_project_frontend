@@ -2,21 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Регистрация</title>
+    <title>Title</title>
 </head>
 <body>
-    <h1> Регистрация </h1>
-    <div class="container">
+<h2> Polls </h2>
+<div class="container">
         {% for field, errors in form.errors.items() %}
             <small class="form-text text-muted ">
                 {{ ', '.join(errors) }}
             </small>
         {% endfor %}
     <form action="" method="post">
-        <p>
-            {{form.name.label}} <br>
-            {{form.name(size=30)}}
-        </p>
         <p>
             {{form.email.label}} <br>
             {{form.email(size=30)}}
@@ -26,15 +22,10 @@
             {{form.password(size=30)}}
         </p>
         <p>
-            {{form.valid_password.label}} <br>
-            {{form.valid_password(size=30)}}
+            {{form.submit()}}
         </p>
-        <p>
-            {{form.register()}}
-        </p>
-
         <hr align=left width="300px">
-        <p><a href="{{url_for('user.to_sign_in')}}">Sign in</a>
+        <p><a href="{{url_for('user.to_sign_up')}}">Sign up</a>
     </form>
 </div>
 </body>

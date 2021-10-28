@@ -31,3 +31,19 @@ class RegisterForm(FlaskForm):
                                                             message='Password has permitted valid symbols - a-zA-Z0-9/+!#$%^&*()`~')])
 
     register = SubmitField('Зарегестрироваться')
+
+
+class SigningInForm(FlaskForm):
+    class Meta:
+        csrf = False
+
+    email = StringField('E-mail', validators=[Length(min=4, message="Too short username"),
+                                                   DataRequired(message="Could not be empty"),
+                                                   Regexp(r'[a-zA-Z0-9]+', message=r"Invalid username! Enter only "
+                                                                                   r"possible symbols a-z, 0-9")])
+    password = PasswordField('Пароль', validators=[DataRequired(),
+                                                     Length(min=6, max=64, message='Password length must be '
+                                                                                   'between %(min)d and %(max)d characters'),
+                                                     Regexp(r'[a-zA-Z0-9/+!@#$%^&*:~]+',
+                                                            message="Password has immpossible symbols (Use only a-zA-Z0-9/+!@#$%^&*:~)")])
+    submit = SubmitField('Подтвердить')

@@ -26,12 +26,10 @@ def create_app():
     app.config["JWT_COOKIE_CSRF_PROTECT"] = JWT_COOKIE_CSRF_PROTECT
 
     app.register_blueprint(user_blueprint)
-    # app.register_blueprint(poll_blueprint)
+    app.register_blueprint(poll_blueprint)
     # app.register_blueprint(admin_blueprint)
     # app.register_blueprint(stat_blueprint)
     jwt = JWTManager(app)
-
-
 
     cookies = {'access_token_cookie': ""}
     
