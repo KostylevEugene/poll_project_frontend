@@ -2,9 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Мои опросы</title>
 </head>
 <body>
-
+    <h1> Мои опросы </h1>
+    <form action="" method="get">
+        {% for poll in polls_list %}
+            {{poll}}<br>
+        {% endfor %}
+    </form>
 </body>
 </html>

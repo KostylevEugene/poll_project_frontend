@@ -1,22 +1,35 @@
-from flask import Blueprint, jsonify, request, session
+from flask import Blueprint, flash, jsonify, redirect, render_template, request, session, url_for
 from flask_jwt_extended import verify_jwt_in_request, \
     set_access_cookies, get_jwt_identity, create_refresh_token
 from flask_jwt_extended.exceptions import NoAuthorizationError
+from webapp.config import BACKEND_PORT
 # from webapp.queries import *
 import json
+import requests
 
 blueprint = Blueprint('poll', __name__, url_prefix='/polls')
 
 
 @blueprint.route('/mypolls', methods=['GET', 'POST', 'OPTIONS'])
 def get_mypolls():
-    try:
-        verify_jwt_in_request(locations=['headers', 'cookies'])
-    except NoAuthorizationError:
-        return jsonify({'msg': 'Login please!'}), 401
+
+    if session['username'] == 'guest':
+        flash('Sign In please!')
+        return redirect(url_for('user.to_sign_in'))
+
+    cookies = {'access_token_cookie': request.cookies.get('access_token')}
 
     if request.method == 'GET':
-        return jsonify({'msg': 'mypolls page'})
+        url_parts = request.url.partition(f":5001")
+        resp = requests.get(f'{url_parts[0]}:{BACKEND_PORT}/{url_parts[2]}',
+                            params={'session': session['username']}, cookies=cookies)
+        print(url_parts)
+        print(cookies)
+        if resp.status_code > 202:
+            flash(resp.json()['msg'])
+            return redirect(url_for('user.to_sign_in'))
+        polls_list = resp.json()['msg']
+        return render_template('mypolls.html', polls_list=polls_list)
 
 
 # @blueprint.route('/mypolls/newpoll', methods=['GET', 'POST', 'OPTIONS'])

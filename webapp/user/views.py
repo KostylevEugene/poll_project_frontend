@@ -1,4 +1,5 @@
-from flask import Blueprint, flash, jsonify, make_response, redirect, render_template, request, session, url_for
+from flask import Blueprint, flash, jsonify, make_response, redirect, \
+    render_template, request, session, url_for
 from flask_jwt_extended import set_access_cookies
 from webapp.config import BACKEND_PORT
 from webapp.forms import RegisterForm, SigningInForm
@@ -58,6 +59,7 @@ def to_sign_in():
                              json={'email': form.email.data,
                                    'password': form.password.data,
                                    })
+        print(f'{url_parts[0]}:{BACKEND_PORT}/{url_parts[2]}')
         if resp.status_code > 202:
             flash(f"{resp.json()['msg']}")
             return render_template('signing_in.html', form=form)
@@ -68,8 +70,8 @@ def to_sign_in():
 
         cookies = {'access_token_cookie': request.cookies.get('access_token')}
 
-        set_access_cookies(respon, resp.json()['JWT'])
-        respon.set_cookie('access_token', resp.json()['JWT'])
+        set_access_cookies(respon, resp.json()["JWT"])
+        respon.set_cookie('access_token', resp.json()["JWT"])
         return respon
 
     if request.method == 'GET':

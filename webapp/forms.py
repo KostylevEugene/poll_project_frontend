@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, Regexp         # проверяет наличие данных в форме
 
+
 class RegisterForm(FlaskForm):
     class Meta:
         csrf = False
