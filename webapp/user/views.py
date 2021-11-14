@@ -27,6 +27,7 @@ def to_sign_up():
                                    'password': form.password.data,
                                    'valid_password': form.valid_password.data,
                                    })
+
         if resp.status_code > 202:
             flash(f"{resp.json()['msg']}")
             return render_template('register.html', form=form)

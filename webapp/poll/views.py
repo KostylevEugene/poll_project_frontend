@@ -23,8 +23,7 @@ def get_mypolls():
         url_parts = request.url.partition(f":5001")
         resp = requests.get(f'{url_parts[0]}:{BACKEND_PORT}/{url_parts[2]}',
                             params={'session': session['username']}, cookies=cookies)
-        print(url_parts)
-        print(cookies)
+
         if resp.status_code > 202:
             flash(resp.json()['msg'])
             return redirect(url_for('user.to_sign_in'))
