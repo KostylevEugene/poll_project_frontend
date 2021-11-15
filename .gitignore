@@ -2,3 +2,5 @@ venv
 webapp/config.py
 .idea
 __pycache__
+webapp/TODO.txt
+webapp/queries.py
