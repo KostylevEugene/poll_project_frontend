@@ -27,7 +27,6 @@ def to_sign_up():
                                    'password': form.password.data,
                                    'valid_password': form.valid_password.data,
                                    })
-
         if resp.status_code > 202:
             flash(f"{resp.json()['msg']}")
             return render_template('register.html', form=form)
@@ -38,11 +37,8 @@ def to_sign_up():
     if request.method == 'GET':
         return render_template('registration.html', form=form)
 
-    if request.method == 'OPTIONS':
-        return jsonify({'msg': 'Allow GET, POST methods'}), 200
-
     else:
-        return jsonify({'msg': "method not allowed"}), 405
+        return render_template('registration.html', form=form)
 
 
 @blueprint.route('/log', methods=['GET', 'POST'])
@@ -82,4 +78,4 @@ def to_sign_in():
         return jsonify({'msg': 'Allow GET, POST methods'}), 200
 
     else:
-        return jsonify({"method not allowed"}), 405
+        return render_template('signing_in.html', form=form)
